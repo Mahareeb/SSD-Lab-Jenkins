@@ -15,7 +15,7 @@ pipeline {
                 // Here you can define commands for your build
                 echo "Building version ${NEW_VERSION}"
                 // Run Maven to install dependencies or build the project
-                sh 'mvn install'
+                bat 'mvn install'
             }
         }
         stage('Test') {

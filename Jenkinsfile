@@ -1,6 +1,9 @@
-flag = true
 pipeline {
     agent any
+    environment {
+        // Define flag here if it's supposed to be a constant or set via environment
+        FLAG = 'true'
+    }
     stages {
         stage('Build') {
             steps {
@@ -8,14 +11,15 @@ pipeline {
                 // Here you can define commands for your build
             }
         }
-        stage('test') {
-            steps {
-                when {
-                    expression
-                        flag == false
+        stage('Conditional Test') {
+            when {
+                expression {
+                    return env.FLAG == 'false'  // Ensure this returns a boolean directly
                 }
             }
-            echo 'Testing Project'
+            steps {
+                echo 'Testing Project because flag is false'
+            }
         }
         stage('Test') {
             steps {
@@ -32,12 +36,14 @@ pipeline {
     }
     post {
         always {
-            //The conditions here will execute regardless of the result of the build
-            echo 'Post Build Running....'
+            steps {
+                echo 'Post Build Running....'
+            }
         }
         failure {
-            //The conditions here will execute if the build has failed
-            echo 'Post action if the build fails....'
+            steps {
+                echo 'Post action if the build fails....'
+            }
         }
     }
 }

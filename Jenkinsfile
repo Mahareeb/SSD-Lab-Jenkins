@@ -14,7 +14,7 @@ pipeline {
                 echo 'Building..'
                 // Here you can define commands for your build
                 echo "Building version ${NEW_VERSION}"
-                // Run Maven to install dependencies or build the project
+                // Use bat instead of sh for Windows agent
                 bat 'mvn install'
             }
         }

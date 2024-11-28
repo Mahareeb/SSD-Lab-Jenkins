@@ -1,44 +1,37 @@
 pipeline {
     agent any
-    parameters {
-        string(name: 'VERSION', defaultValue: '', description: 'Version to deploy on prod')
-        choice(name: 'VERSION_CHOICES', choices: ['1.1.0', '1.2.0', '1.3.0'], description: 'Choose version')
-        booleanParam(name: 'executeTests', defaultValue: true, description: 'Execute tests')
-    }
     environment {
-        // Use parameters in the environment section
-        NEW_VERSION = "${params.VERSION_CHOICES}"
+        // Define NEW_VERSION here so it can be used by any stage
+        NEW_VERSION = '1.3.0'
     }
     stages {
         stage('Build') {
             steps {
                 echo 'Building..'
+                // Here you can define commands for your build
                 echo "Building version ${NEW_VERSION}"
             }
         }
         stage('Test') {
-            when {
-                expression {
-                    return params.executeTests
-                }
-            }
             steps {
                 echo 'Testing..'
-                echo 'Testing Project'
+                // Here you can define commands for your tests
             }
         }
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
-                echo "Deploying version ${NEW_VERSION}"
+                // Here you can define commands for your deployment
             }
         }
     }
     post {
         always {
+            //The conditions here will execute regardless of the result of the build
             echo 'Post Build Running....'
         }
         failure {
+            //The conditions here will execute if the build has failed
             echo 'Post action if the build fails....'
         }
     }

@@ -1,43 +1,44 @@
 pipeline {
     agent any
-    tools { 
-        // Specifies that Maven is required in this pipeline
-        maven 'Maven' // Ensure 'Maven' matches the name of the Maven installation in your Jenkins configuration
+    parameters {
+        string(name: 'VERSION', defaultValue: '', description: 'Version to deploy on prod')
+        choice(name: 'VERSION_CHOICES', choices: ['1.1.0', '1.2.0', '1.3.0'], description: 'Choose version')
+        booleanParam(name: 'executeTests', defaultValue: true, description: 'Execute tests')
     }
     environment {
-        // Define NEW_VERSION here so it can be used by any stage
-        NEW_VERSION = '1.3.0'
+        // Use parameters in the environment section
+        NEW_VERSION = "${params.VERSION_CHOICES}"
     }
     stages {
         stage('Build') {
             steps {
                 echo 'Building..'
-                // Here you can define commands for your build
                 echo "Building version ${NEW_VERSION}"
-                // Use bat instead of sh for Windows agent
-                bat 'mvn install'
             }
         }
         stage('Test') {
+            when {
+                expression {
+                    return params.executeTests
+                }
+            }
             steps {
                 echo 'Testing..'
-                // Here you can define commands for your tests
+                echo 'Testing Project'
             }
         }
         stage('Deploy') {
             steps {
                 echo 'Deploying....'
-                // Here you can define commands for your deployment
+                echo "Deploying version ${NEW_VERSION}"
             }
         }
     }
     post {
         always {
-            //The conditions here will execute regardless of the result of the build
             echo 'Post Build Running....'
         }
         failure {
-            //The conditions here will execute if the build has failed
             echo 'Post action if the build fails....'
         }
     }

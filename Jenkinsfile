@@ -1,24 +1,15 @@
 pipeline {
     agent any
     environment {
-        // Define flag here if it's supposed to be a constant or set via environment
-        FLAG = 'true'
+        // Define NEW_VERSION here so it can be used by any stage
+        NEW_VERSION = '1.3.0'
     }
     stages {
         stage('Build') {
             steps {
-                echo 'Building Project ..'
+                echo 'Building..'
                 // Here you can define commands for your build
-            }
-        }
-        stage('Conditional Test') {
-            when {
-                expression {
-                    return env.FLAG == 'false'  // Ensure this returns a boolean directly
-                }
-            }
-            steps {
-                echo 'Testing Project because flag is false'
+                echo "Building version ${NEW_VERSION}"
             }
         }
         stage('Test') {
@@ -36,14 +27,12 @@ pipeline {
     }
     post {
         always {
-            steps {
-                echo 'Post Build Running....'
-            }
+            //The conditions here will execute regardless of the result of the build
+            echo 'Post Build Running....'
         }
         failure {
-            steps {
-                echo 'Post action if the build fails....'
-            }
+            //The conditions here will execute if the build has failed
+            echo 'Post action if the build fails....'
         }
     }
 }
